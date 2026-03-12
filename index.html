@@ -24,7 +24,7 @@ height:100vh;
 mix-blend-mode:difference;
 position:absolute;
 transform-origin:center;
-user-select:none; /* default: physics drag */
+user-select:none; 
 cursor:grab;
 transition:filter .2s ease, opacity .2s ease;
 }
@@ -49,7 +49,6 @@ letter-spacing:-0.04em;
 }
 
 .tiny{
-/* kept for compatibility but same size as other small text */
 font-size:13px;
 font-weight:400;
 opacity:0.8;
@@ -114,7 +113,7 @@ bottom:10px;
 transform:translateX(-50%) scale(1.1);
 width:220px;
 height:216px;
-pointer-events:none; /* visual only, physics handled separately */
+pointer-events:none; 
 z-index:1;
 }
 
@@ -300,7 +299,6 @@ z-index:1;
 .circle{
 width:252px;
 height:252px;
-top:70px;
 }
 .firework-layer,
 .firework-burst{
@@ -371,6 +369,10 @@ display:none;
 <div class="tip side-label"><span>kelimeleri sürükle !</span></div>
 <div class="left-date side-label"><span>22.03.2026.</span></div>
 
+<audio id="bgMusic" loop preload="auto" playsinline webkit-playsinline>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
 <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
 
 <script>
@@ -396,7 +398,8 @@ let cakeBlock1 = null;
 let cakeBlock2 = null;
 let cakeBlock3 = null;
 let started = false;
-let audioUnlocked = false;
+let audioPrimed = false;
+let audioStarted = false;
 
 const heartRunner = {
   x: window.innerWidth * 0.3,
@@ -502,6 +505,7 @@ mouseConstraint = MouseConstraint.create(engine, {
 });
 World.add(world, mouseConstraint);
 
+// ALT key: enable text selection instead of dragging
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Alt') {
     document.body.classList.add('alt-select');
@@ -544,21 +548,27 @@ window.addEventListener('keydown', (e) => {
   copySelectedText();
 });
 
-function unlockAudio() {
-  if (!bgMusic || audioUnlocked) return;
+function primeAndScheduleMusic() {
+  if (!bgMusic || audioPrimed) return;
+  audioPrimed = true;
+
   bgMusic.volume = 0;
+  bgMusic.currentTime = 0;
+
   bgMusic.play().then(() => {
-    bgMusic.pause();
-    bgMusic.currentTime = 0;
-    bgMusic.volume = 0.5;
-    audioUnlocked = true;
-  }).catch(() => {});
-  window.removeEventListener('click', unlockAudio);
-  window.removeEventListener('touchstart', unlockAudio);
+    setTimeout(() => {
+      if (!bgMusic || audioStarted) return;
+      audioStarted = true;
+      bgMusic.volume = 0.5;
+    }, 5000);
+  }).catch(() => {
+    audioPrimed = false;
+  });
 }
 
-window.addEventListener('click', unlockAudio, { once: true });
-window.addEventListener('touchstart', unlockAudio, { once: true });
+window.addEventListener('pointerdown', primeAndScheduleMusic, { once: true });
+window.addEventListener('touchstart', primeAndScheduleMusic, { once: true });
+window.addEventListener('click', primeAndScheduleMusic, { once: true });
 
 let dragStart = null;
 let lastDragSample = null;
@@ -674,11 +684,6 @@ function start() {
   started = true;
   Runner.run(runner, engine);
 
-  if (bgMusic) {
-    bgMusic.volume = 0.5;
-    bgMusic.play().catch(() => {});
-  }
-
   const tipLabel = document.querySelector('.tip span');
   if (tipLabel) {
     tipLabel.textContent = 'kelimeleri sürükle !';
@@ -694,10 +699,6 @@ window.addEventListener('resize', () => {
 
 render();
 </script>
-
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
 
 </body>
 </html>
