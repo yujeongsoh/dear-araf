@@ -49,6 +49,7 @@ letter-spacing:-0.04em;
 }
 
 .tiny{
+/* kept for compatibility but same size as other small text */
 font-size:13px;
 font-weight:400;
 opacity:0.8;
@@ -106,8 +107,6 @@ left:2px;
 transform:rotate(90deg);
 }
 
-
-
 .cake{
 position:absolute;
 left:42%;
@@ -115,7 +114,7 @@ bottom:10px;
 transform:translateX(-50%) scale(1.1);
 width:220px;
 height:216px;
-pointer-events:none; 
+pointer-events:none; /* visual only, physics handled separately */
 z-index:1;
 }
 
@@ -301,6 +300,7 @@ z-index:1;
 .circle{
 width:252px;
 height:252px;
+top:70px;
 }
 .firework-layer,
 .firework-burst{
@@ -366,9 +366,6 @@ display:none;
 <div class="item word tiny" data-angle="0.04" style="left:80vw;top:40vh;transform:rotate(0.04rad)">my safe place</div>
 <div class="item word tiny soft" data-angle="-0.08" style="left:72vw;top:55vh;transform:rotate(-0.08rad)">sunshine</div>
 <div class="item word tiny" data-angle="0.02" style="left:48vw;top:82vh;transform:rotate(0.02rad)">dream car road trip</div>
-
-
-
 </div>
 
 <div class="tip side-label"><span>kelimeleri sürükle !</span></div>
@@ -386,6 +383,7 @@ world.gravity.y = 1;
 const items = document.querySelectorAll('.item');
 const centerTitleEl = document.getElementById('centerTitle');
 const heartRunnerEl = document.getElementById('heartRunner');
+const bgMusic = document.getElementById('bgMusic');
 const bodies = [];
 
 let floor = null;
@@ -398,6 +396,7 @@ let cakeBlock1 = null;
 let cakeBlock2 = null;
 let cakeBlock3 = null;
 let started = false;
+let audioUnlocked = false;
 
 const heartRunner = {
   x: window.innerWidth * 0.3,
@@ -436,8 +435,6 @@ function createBounds() {
     }
   );
 
-  // create physics bodies for cake tiers
-  const cakeEl = document.querySelector('.cake');
   const tier1 = document.querySelector('.tier-1').getBoundingClientRect();
   const tier2 = document.querySelector('.tier-2').getBoundingClientRect();
   const tier3 = document.querySelector('.tier-3').getBoundingClientRect();
@@ -505,7 +502,6 @@ mouseConstraint = MouseConstraint.create(engine, {
 });
 World.add(world, mouseConstraint);
 
-// ALT key: enable text selection instead of dragging
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Alt') {
     document.body.classList.add('alt-select');
@@ -548,10 +544,25 @@ window.addEventListener('keydown', (e) => {
   copySelectedText();
 });
 
+function unlockAudio() {
+  if (!bgMusic || audioUnlocked) return;
+  bgMusic.volume = 0;
+  bgMusic.play().then(() => {
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+    bgMusic.volume = 0.5;
+    audioUnlocked = true;
+  }).catch(() => {});
+  window.removeEventListener('click', unlockAudio);
+  window.removeEventListener('touchstart', unlockAudio);
+}
+
+window.addEventListener('click', unlockAudio, { once: true });
+window.addEventListener('touchstart', unlockAudio, { once: true });
+
 let dragStart = null;
 let lastDragSample = null;
 let draggedBody = null;
-
 
 Matter.Events.on(mouseConstraint, 'startdrag', (event) => {
   draggedBody = event.body;
@@ -663,6 +674,11 @@ function start() {
   started = true;
   Runner.run(runner, engine);
 
+  if (bgMusic) {
+    bgMusic.volume = 0.5;
+    bgMusic.play().catch(() => {});
+  }
+
   const tipLabel = document.querySelector('.tip span');
   if (tipLabel) {
     tipLabel.textContent = 'kelimeleri sürükle !';
@@ -677,10 +693,11 @@ window.addEventListener('resize', () => {
 });
 
 render();
-
 </script>
 
-<audio src="music.mp3" autoplay loop></audio>
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 </body>
 </html>
