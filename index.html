@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Happy Birthday Araf</title>
+<style>
+html,body{
+margin:0;
+padding:0;
+background:#f2efe8;
+font-family:Arial, Helvetica, sans-serif;
+overflow:hidden;
+height:100%;
+}
+
+#stage{
+position:relative;
+width:100vw;
+height:100vh;
+}
+
+.item{
+mix-blend-mode:difference;
+position:absolute;
+transform-origin:center;
+user-select:none; /* default: physics drag */
+cursor:grab;
+transition:filter .2s ease, opacity .2s ease;
+}
+
+.item:active{
+cursor:grabbing;
+}
+
+.word{
+font-size:13px;
+font-weight:500;
+color:#ffffff;
+letter-spacing:-0.02em;
+line-height:1.05;
+white-space:nowrap;
+}
+
+.big{
+font-size:26px;
+font-weight:600;
+letter-spacing:-0.04em;
+}
+
+.tiny{
+font-size:13px;
+font-weight:400;
+opacity:0.8;
+}
+
+.soft{
+opacity:0.8;
+}
+
+body.alt-select .item{
+user-select:text;
+-webkit-user-select:text;
+cursor:text;
+}
+
+.item:hover{
+filter:blur(0.2px);
+}
+
+.side-label{
+position:fixed;
+top:0;
+width:24px;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:4;
+pointer-events:none;
+}
+
+.side-label span{
+display:block;
+font-size:11px;
+letter-spacing:0.08em;
+text-transform:uppercase;
+color:#777;
+opacity:0.7;
+white-space:nowrap;
+}
+
+.tip{
+right:2px;
+}
+
+.tip span{
+transform:rotate(-90deg);
+}
+
+.left-date{
+left:2px;
+}
+
+.left-date span{
+transform:rotate(90deg);
+}
+
+
+
+.cake{
+position:absolute;
+left:42%;
+bottom:10px;
+transform:translateX(-50%) scale(1.1);
+width:220px;
+height:216px;
+pointer-events:none; 
+z-index:1;
+}
+
+.cake-tier{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+background:#eec1cc;
+}
+
+.cake-tier.tier-1{
+bottom:0;
+width:220px;
+height:53px;
+}
+
+.cake-tier.tier-2{
+bottom:53px;
+width:170px;
+height:46px;
+}
+
+.cake-tier.tier-3{
+bottom:99px;
+width:120px;
+height:38px;
+}
+
+.cake-label{
+position:absolute;
+left:50%;
+top:140px;
+transform:translate(-50%,-50%);
+font-family:"Nunito Rounded","Quicksand","Arial Rounded MT Bold",Arial,Helvetica,sans-serif;
+font-size:20px;
+font-weight:700;
+letter-spacing:0.01em;
+color:#f2efe8;
+text-shadow:
+0 1px 0 #eec1cc,
+0 2px 0 #eec1cc,
+0 3px 0 #eec1cc,
+0 4px 6px rgba(0,0,0,0.08);
+pointer-events:none;
+user-select:none;
+white-space:nowrap;
+z-index:2;
+}
+
+.center-title{
+mix-blend-mode:difference;
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+font-size:13px;
+font-weight:500;
+letter-spacing:-0.02em;
+line-height:1.05;
+white-space:nowrap;
+color:#ffffff;
+z-index:3;
+pointer-events:none;
+}
+
+.center-sub{
+mix-blend-mode:difference;
+position:absolute;
+left:50%;
+top:calc(50% + 16px);
+transform:translateX(-50%);
+font-size:11px;
+font-weight:400;
+letter-spacing:-0.01em;
+white-space:nowrap;
+color:#ffffff;
+z-index:3;
+pointer-events:none;
+opacity:0.9;
+}
+
+.grain{
+position:fixed;
+inset:0;
+pointer-events:none;
+opacity:0.08;
+background-image:
+radial-gradient(circle at 20% 20%, rgba(0,0,0,0.35) 0.5px, transparent 0.6px),
+radial-gradient(circle at 80% 40%, rgba(0,0,0,0.28) 0.5px, transparent 0.6px),
+radial-gradient(circle at 40% 80%, rgba(0,0,0,0.22) 0.5px, transparent 0.6px),
+radial-gradient(circle at 70% 70%, rgba(0,0,0,0.18) 0.5px, transparent 0.6px);
+background-size: 24px 24px, 31px 31px, 27px 27px, 35px 35px;
+}
+
+.decor{
+position:absolute;
+inset:0;
+pointer-events:none;
+z-index:0;
+}
+
+.circle{
+position:absolute;
+width:315px;
+height:315px;
+border-radius:50%;
+background:#0b1a3a;
+right:100px;
+top:100px;
+opacity:0.95;
+}
+
+.triCluster{
+position:absolute;
+left:140px;
+bottom:300px;
+display:flex;
+transform:rotate(-30deg);
+}
+
+.triangle{
+width:0;
+height:0;
+border-left:22px solid transparent;
+border-right:22px solid transparent;
+border-bottom:38px solid #f2c94c;
+margin-right:-10px;
+}
+
+.heart-runner{
+position:absolute;
+left:30vw;
+top:40vh;
+font-size:26px;
+line-height:1;
+color:#d61f2c;
+pointer-events:none;
+user-select:none;
+z-index:2;
+}
+
+.firework-layer{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:1;
+}
+
+.firework-burst{
+position:absolute;
+left:26%;
+top:15%;
+width:0;
+height:0;
+transform:translate(-50%,-50%) scale(0.85);
+opacity:0.9;
+}
+
+.firework-burst::before{
+content:'';
+position:absolute;
+left:-28px;
+top:-28px;
+width:56px;
+height:56px;
+border-radius:50%;
+background:#f2efe8;
+z-index:2;
+}
+
+.firework-line{
+position:absolute;
+left:0;
+top:0;
+height:3px;
+border-radius:999px;
+background:#000;
+transform-origin:0 50%;
+z-index:1;
+}
+
+@media (max-width: 768px){
+.circle{
+width:252px;
+height:252px;
+}
+.firework-layer,
+.firework-burst{
+display:none;
+}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div id="fireworkLayer" class="firework-layer">
+  <div class="firework-burst">
+    <div class="firework-line" style="width:120px; transform:rotate(0deg)"></div>
+    <div class="firework-line" style="width:84px; transform:rotate(24deg)"></div>
+    <div class="firework-line" style="width:136px; transform:rotate(52deg)"></div>
+    <div class="firework-line" style="width:96px; transform:rotate(84deg)"></div>
+    <div class="firework-line" style="width:128px; transform:rotate(116deg)"></div>
+    <div class="firework-line" style="width:90px; transform:rotate(150deg)"></div>
+    <div class="firework-line" style="width:140px; transform:rotate(184deg)"></div>
+    <div class="firework-line" style="width:88px; transform:rotate(214deg)"></div>
+    <div class="firework-line" style="width:132px; transform:rotate(246deg)"></div>
+    <div class="firework-line" style="width:100px; transform:rotate(278deg)"></div>
+    <div class="firework-line" style="width:126px; transform:rotate(308deg)"></div>
+    <div class="firework-line" style="width:92px; transform:rotate(336deg)"></div>
+  </div>
+</div>
+
+<div id="stage">
+<div class="decor">
+<div class="cake">
+<div class="cake-label">FOR ARAF</div>
+<div class="cake-tier tier-1"></div>
+<div class="cake-tier tier-2"></div>
+<div class="cake-tier tier-3"></div>
+</div>
+<div class="circle"></div>
+<div class="triCluster">
+<div class="triangle"></div>
+<div class="triangle"></div>
+<div class="triangle"></div>
+<div class="triangle"></div>
+</div>
+</div>
+<div id="centerTitle" class="center-title">Happy birthday, Baha</div>
+<div class="center-sub">from sasa</div>
+<div id="heartRunner" class="heart-runner">♥</div>
+
+<div class="item word big" data-angle="-0.12" style="left:8vw;top:8vh;transform:rotate(-0.12rad)">Araf</div>
+<div class="item word big" data-angle="0.1" style="left:32vw;top:14vh;transform:rotate(0.1rad)">Sasa</div>
+
+<div class="item word tiny" data-angle="0.08" style="left:20vw;top:12vh;transform:rotate(0.08rad)">happy birthday</div>
+<div class="item word tiny" data-angle="-0.05" style="left:90vw;top:10vh;transform:rotate(-0.05rad)">sende bir parçam var</div>
+<div class="item word tiny soft" data-angle="0.03" style="left:42vw;top:18vh;transform:rotate(0.03rad)">smoking movie night</div>
+<div class="item word tiny" data-angle="-0.09" style="left:12vw;top:40vh;transform:rotate(-0.09rad)">Marmaris</div>
+<div class="item word tiny" data-angle="0.06" style="left:68vw;top:36vh;transform:rotate(0.06rad)">late night muisc</div>
+<div class="item word tiny soft" data-angle="-0.04" style="left:28vw;top:60vh;transform:rotate(-0.04rad)">곰단짝</div>
+<div class="item word tiny" data-angle="0.11" style="left:52vw;top:55vh;transform:rotate(0.11rad)">whiskey from afar</div>
+<div class="item word tiny" data-angle="-0.07" style="left:76vw;top:70vh;transform:rotate(-0.07rad)">우리의 영화</div>
+<div class="item word tiny soft" data-angle="0.05" style="left:35vw;top:28vh;transform:rotate(0.05rad)">우리가 좋아하는 사람들</div>
+<div class="item word tiny" data-angle="-0.03" style="left:58vw;top:75vh;transform:rotate(-0.03rad)">your günaydın</div>
+<div class="item word tiny" data-angle="0.09" style="left:10vw;top:75vh;transform:rotate(0.09rad)">good night kiss</div>
+<div class="item word tiny soft" data-angle="-0.06" style="left:80vw;top:22vh;transform:rotate(-0.06rad)">너의 행복을 바래</div>
+<div class="item word tiny" data-angle="0.04" style="left:80vw;top:40vh;transform:rotate(0.04rad)">my safe place</div>
+<div class="item word tiny soft" data-angle="-0.08" style="left:72vw;top:55vh;transform:rotate(-0.08rad)">sunshine</div>
+<div class="item word tiny" data-angle="0.02" style="left:48vw;top:82vh;transform:rotate(0.02rad)">dream car road trip</div>
+
+
+
+</div>
+
+<div class="tip side-label"><span>kelimeleri sürükle !</span></div>
+<div class="left-date side-label"><span>22.03.2026.</span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
+
+<script>
+const { Engine, World, Bodies, Runner, Body, Mouse, MouseConstraint } = Matter;
+
+const engine = Engine.create();
+const world = engine.world;
+world.gravity.y = 1;
+
+const items = document.querySelectorAll('.item');
+const centerTitleEl = document.getElementById('centerTitle');
+const heartRunnerEl = document.getElementById('heartRunner');
+const bodies = [];
+
+let floor = null;
+let leftWall = null;
+let rightWall = null;
+let ceiling = null;
+let mouseConstraint = null;
+let centerBlock = null;
+let cakeBlock1 = null;
+let cakeBlock2 = null;
+let cakeBlock3 = null;
+let started = false;
+
+const heartRunner = {
+  x: window.innerWidth * 0.3,
+  y: window.innerHeight * 0.4,
+  vx: 1.35,
+  vy: -1.1,
+  size: 26
+};
+
+function createBounds() {
+  if (floor) {
+    const toRemove = [floor, leftWall, rightWall, ceiling];
+    if (centerBlock) toRemove.push(centerBlock);
+    if (cakeBlock1) toRemove.push(cakeBlock1);
+    if (cakeBlock2) toRemove.push(cakeBlock2);
+    if (cakeBlock3) toRemove.push(cakeBlock3);
+    World.remove(world, toRemove);
+  }
+
+  floor = Bodies.rectangle(window.innerWidth / 2, window.innerHeight + 40, window.innerWidth, 80, { isStatic: true });
+  leftWall = Bodies.rectangle(-40, window.innerHeight / 2, 80, window.innerHeight, { isStatic: true });
+  rightWall = Bodies.rectangle(window.innerWidth + 40, window.innerHeight / 2, 80, window.innerHeight, { isStatic: true });
+  ceiling = Bodies.rectangle(window.innerWidth / 2, -40, window.innerWidth, 80, { isStatic: true });
+
+  const titleRect = centerTitleEl.getBoundingClientRect();
+  centerBlock = Bodies.rectangle(
+    titleRect.left + titleRect.width / 2,
+    titleRect.top + titleRect.height / 2,
+    titleRect.width + 18,
+    titleRect.height + 10,
+    {
+      isStatic: true,
+      restitution: 0.9,
+      friction: 0,
+      render: { visible: false }
+    }
+  );
+
+  // create physics bodies for cake tiers
+  const cakeEl = document.querySelector('.cake');
+  const tier1 = document.querySelector('.tier-1').getBoundingClientRect();
+  const tier2 = document.querySelector('.tier-2').getBoundingClientRect();
+  const tier3 = document.querySelector('.tier-3').getBoundingClientRect();
+
+  cakeBlock1 = Bodies.rectangle(
+    tier1.left + tier1.width / 2,
+    tier1.top + tier1.height / 2,
+    tier1.width,
+    tier1.height,
+    { isStatic: true, restitution: 0.6 }
+  );
+
+  cakeBlock2 = Bodies.rectangle(
+    tier2.left + tier2.width / 2,
+    tier2.top + tier2.height / 2,
+    tier2.width,
+    tier2.height,
+    { isStatic: true, restitution: 0.6 }
+  );
+
+  cakeBlock3 = Bodies.rectangle(
+    tier3.left + tier3.width / 2,
+    tier3.top + tier3.height / 2,
+    tier3.width,
+    tier3.height,
+    { isStatic: true, restitution: 0.6 }
+  );
+
+  World.add(world, [floor, leftWall, rightWall, ceiling, centerBlock, cakeBlock1, cakeBlock2, cakeBlock3]);
+}
+
+createBounds();
+
+items.forEach((el) => {
+  const rect = el.getBoundingClientRect();
+  const initialAngle = parseFloat(el.dataset.angle || '0');
+  const body = Bodies.rectangle(
+    rect.left + rect.width / 2,
+    rect.top + rect.height / 2,
+    rect.width,
+    rect.height,
+    {
+      restitution: 0.72,
+      friction: 0.12,
+      frictionAir: 0.018,
+      density: 0.0015,
+      angle: initialAngle
+    }
+  );
+
+  bodies.push({ el, body, w: rect.width, h: rect.height, initialAngle });
+  World.add(world, body);
+});
+
+const runner = Runner.create();
+
+const mouse = Mouse.create(document.body);
+mouseConstraint = MouseConstraint.create(engine, {
+  mouse,
+  constraint: {
+    stiffness: 0.18,
+    damping: 0.08,
+    render: { visible: false }
+  }
+});
+World.add(world, mouseConstraint);
+
+// ALT key: enable text selection instead of dragging
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Alt') {
+    document.body.classList.add('alt-select');
+    mouseConstraint.enabled = false;
+  }
+});
+
+window.addEventListener('keyup', (e) => {
+  if (e.key === 'Alt') {
+    document.body.classList.remove('alt-select');
+    mouseConstraint.enabled = true;
+  }
+});
+
+async function copySelectedText() {
+  const text = window.getSelection().toString().trim();
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (err) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+  }
+}
+
+window.addEventListener('keydown', (e) => {
+  const isCopyShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c';
+  if (!isCopyShortcut) return;
+  if (!document.body.classList.contains('alt-select')) return;
+  if (!window.getSelection().toString().trim()) return;
+
+  e.preventDefault();
+  copySelectedText();
+});
+
+let dragStart = null;
+let lastDragSample = null;
+let draggedBody = null;
+
+
+Matter.Events.on(mouseConstraint, 'startdrag', (event) => {
+  draggedBody = event.body;
+  dragStart = {
+    x: mouse.position.x,
+    y: mouse.position.y,
+    t: performance.now()
+  };
+  lastDragSample = { ...dragStart };
+});
+
+window.addEventListener('mousemove', () => {
+  if (!draggedBody) return;
+  lastDragSample = {
+    x: mouse.position.x,
+    y: mouse.position.y,
+    t: performance.now()
+  };
+});
+
+window.addEventListener('touchmove', () => {
+  if (!draggedBody) return;
+  lastDragSample = {
+    x: mouse.position.x,
+    y: mouse.position.y,
+    t: performance.now()
+  };
+}, { passive: true });
+
+Matter.Events.on(mouseConstraint, 'enddrag', () => {
+  if (!draggedBody || !dragStart || !lastDragSample) {
+    draggedBody = null;
+    dragStart = null;
+    lastDragSample = null;
+    return;
+  }
+
+  const dt = Math.max((lastDragSample.t - dragStart.t) / 1000, 0.016);
+  const vx = (lastDragSample.x - dragStart.x) / dt;
+  const vy = (lastDragSample.y - dragStart.y) / dt;
+
+  const clampedVX = Math.max(Math.min(vx * 0.0012, 1.25), -1.25);
+  const clampedVY = Math.max(Math.min(vy * 0.0012, 1.25), -1.25);
+  const spin = Math.max(Math.min(clampedVX * 0.05, 0.12), -0.12);
+
+  Body.setVelocity(draggedBody, { x: clampedVX, y: clampedVY });
+  Body.setAngularVelocity(draggedBody, spin);
+
+  draggedBody = null;
+  dragStart = null;
+  lastDragSample = null;
+});
+
+function render() {
+  bodies.forEach(({ el, body, w, h, initialAngle }) => {
+    if (started) {
+      el.style.left = (body.position.x - w / 2) + 'px';
+      el.style.top = (body.position.y - h / 2) + 'px';
+      el.style.transform = `rotate(${body.angle}rad)`;
+    } else {
+      el.style.transform = `rotate(${initialAngle}rad)`;
+    }
+  });
+
+  const maxX = window.innerWidth - heartRunner.size;
+  const maxY = window.innerHeight - heartRunner.size;
+
+  heartRunner.x += heartRunner.vx;
+  heartRunner.y += heartRunner.vy;
+
+  if (heartRunner.x <= 0) {
+    heartRunner.x = 0;
+    heartRunner.vx *= -1;
+  } else if (heartRunner.x >= maxX) {
+    heartRunner.x = maxX;
+    heartRunner.vx *= -1;
+  }
+
+  if (heartRunner.y <= 0) {
+    heartRunner.y = 0;
+    heartRunner.vy *= -1;
+  } else if (heartRunner.y >= maxY) {
+    heartRunner.y = maxY;
+    heartRunner.vy *= -1;
+  }
+
+  if (heartRunnerEl) {
+    heartRunnerEl.style.left = heartRunner.x + 'px';
+    heartRunnerEl.style.top = heartRunner.y + 'px';
+  }
+
+  requestAnimationFrame(render);
+}
+
+function start() {
+  if (started) return;
+
+  bodies.forEach(({ el, body, initialAngle }) => {
+    const rect = el.getBoundingClientRect();
+    Body.setPosition(body, {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    });
+    Body.setAngle(body, initialAngle);
+    Body.setVelocity(body, { x: 0, y: 0 });
+    Body.setAngularVelocity(body, 0);
+  });
+
+  started = true;
+  Runner.run(runner, engine);
+
+  const tipLabel = document.querySelector('.tip span');
+  if (tipLabel) {
+    tipLabel.textContent = 'kelimeleri sürükle !';
+  }
+}
+
+setTimeout(start, 5000);
+window.addEventListener('resize', () => {
+  createBounds();
+  heartRunner.x = Math.min(heartRunner.x, window.innerWidth - heartRunner.size);
+  heartRunner.y = Math.min(heartRunner.y, window.innerHeight - heartRunner.size);
+});
+
+render();
+
+</script>
+
+<audio src="music.mp3" autoplay loop></audio>
+
+</body>
+</html>
