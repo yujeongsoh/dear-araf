@@ -783,23 +783,31 @@ window.addEventListener('resize', () => {
 render();
 </script>
 
-<audio id="bgMusic" src="music.mp3" loop preload="auto" playsinline></audio>
+<audio id="bgMusic" loop preload="auto" playsinline webkit-playsinline>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const bgMusic = document.getElementById('bgMusic');
 let musicStarted = false;
 
-function startMusicAfterDelay(){
-  if(!bgMusic || musicStarted) return;
+async function startMusicNow() {
+  if (!bgMusic || musicStarted) return;
   musicStarted = true;
-  bgMusic.volume = 0.5;
-  bgMusic.play().catch(()=>{});
-});
-  },5000);
+
+  try {
+    bgMusic.volume = 0.5;
+    bgMusic.currentTime = 0;
+    await bgMusic.play();
+  } catch (e) {
+    musicStarted = false;
+    console.log('Music play failed:', e);
+  }
 }
 
-window.addEventListener('pointerdown', startMusicAfterDelay, {once:true});
-window.addEventListener('touchstart', startMusicAfterDelay, {once:true});
+window.addEventListener('touchstart', startMusicNow, { once: true, passive: true });
+window.addEventListener('click', startMusicNow, { once: true });
+window.addEventListener('pointerdown', startMusicNow, { once: true });
 </script>
 
 </body>
