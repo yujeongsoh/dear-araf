@@ -154,7 +154,7 @@ left:50%;
 top:140px;
 transform:translate(-50%,-50%);
 font-family:"Nunito Rounded","Quicksand","Arial Rounded MT Bold",Arial,Helvetica,sans-serif;
-font-size:20px;
+font-size:16px;
 font-weight:700;
 letter-spacing:0.01em;
 color:#f2efe8;
@@ -792,9 +792,9 @@ let musicStarted = false;
 function startMusicAfterDelay(){
   if(!bgMusic || musicStarted) return;
   musicStarted = true;
-  setTimeout(()=>{
-    bgMusic.volume = 0.5;
-    bgMusic.play().catch(()=>{});
+  bgMusic.volume = 0.5;
+  bgMusic.play().catch(()=>{});
+});
   },5000);
 }
 
