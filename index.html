@@ -23,29 +23,16 @@ height:100vh;
 .item{
 position:absolute;
 transform-origin:center;
-user-select:none; /* default: physics drag */
+user-select:none;
 cursor:grab;
 transition:filter .2s ease, opacity .2s ease;
 color:#111;
 }
 
-.item .label-base,
-.item .label-blend{
+.item .label-base{
 display:block;
 white-space:nowrap;
-}
-
-.item .label-base{
 color:#111;
-}
-
-.item .label-blend{
-position:absolute;
-inset:0;
-color:#fff;
-mix-blend-mode:difference;
-opacity:0;
-pointer-events:none;
 }
 
 .item:active{
@@ -55,7 +42,7 @@ cursor:grabbing;
 .word{
 font-size:13px;
 font-weight:500;
-color:#ffffff;
+color:#111;
 letter-spacing:-0.02em;
 line-height:1.05;
 white-space:nowrap;
@@ -68,7 +55,6 @@ letter-spacing:-0.04em;
 }
 
 .tiny{
-/* kept for compatibility but same size as other small text */
 font-size:13px;
 font-weight:400;
 opacity:0.8;
@@ -126,8 +112,6 @@ left:2px;
 transform:rotate(90deg);
 }
 
-
-
 .cake{
 position:absolute;
 left:42%;
@@ -135,7 +119,7 @@ bottom:10px;
 transform:translateX(-50%) scale(1.1);
 width:220px;
 height:216px;
-pointer-events:none; /* visual only, physics handled separately */
+pointer-events:none;
 z-index:1;
 }
 
@@ -279,7 +263,7 @@ z-index:2;
 position:fixed;
 inset:0;
 pointer-events:none;
-z-index:2; /* keep above decor so desktop firework is always visible */
+z-index:2;
 }
 
 .firework-burst{
@@ -315,15 +299,61 @@ transform-origin:0 50%;
 z-index:1;
 }
 
+.svg-mask-layer{
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:3;
+}
+
+.svg-mask-layer text{
+fill:#ffffff;
+font-family:Arial, Helvetica, sans-serif;
+text-anchor:middle;
+dominant-baseline:middle;
+}
+
+.svg-mask-layer .svg-big{
+font-size:26px;
+font-weight:600;
+letter-spacing:-0.04em;
+}
+
+.svg-mask-layer .svg-word{
+font-size:13px;
+font-weight:500;
+letter-spacing:-0.02em;
+}
+
+.svg-mask-layer .svg-tiny{
+font-size:13px;
+font-weight:400;
+letter-spacing:-0.02em;
+opacity:0.8;
+}
+
+.svg-mask-layer .svg-center-title{
+font-size:13px;
+font-weight:500;
+letter-spacing:-0.02em;
+}
+
+.svg-mask-layer .svg-center-sub{
+font-size:11px;
+font-weight:400;
+letter-spacing:-0.01em;
+opacity:0.9;
+}
+
 @media (max-width: 768px){
 .circle{
 width:252px;
 height:252px;
-top:70px; /* move circle slightly higher on mobile */
+top:70px;
 }
-/* desktop firework stays visible; mobile-only hide rule is above */
 .firework-layer,
-.firework-burst{
+.firework-burst,
+.svg-mask-layer{
 display:none;
 }
 }
@@ -331,6 +361,14 @@ display:none;
 </head>
 <body>
 <div class="grain"></div>
+<svg id="svgMaskLayer" class="svg-mask-layer" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <clipPath id="circleClipMask">
+      <circle id="circleClipShape" cx="0" cy="0" r="0"></circle>
+    </clipPath>
+  </defs>
+  <g id="svgMaskedTexts" clip-path="url(#circleClipMask)"></g>
+</svg>
 <div id="fireworkLayer" class="firework-layer">
   <div class="firework-burst">
     <div class="firework-line" style="width:120px; transform:rotate(0deg)"></div>
@@ -368,27 +406,24 @@ display:none;
 <div class="center-sub">from sasa</div>
 <div id="heartRunner" class="heart-runner">♥</div>
 
-<div class="item word big" data-angle="-0.12" style="left:8vw;top:8vh;transform:rotate(-0.12rad)"><span class="label-base">Araf</span><span class="label-blend">Araf</span></div>
-<div class="item word big" data-angle="0.1" style="left:32vw;top:14vh;transform:rotate(0.1rad)"><span class="label-base">Sasa</span><span class="label-blend">Sasa</span></div>
+<div class="item word big" data-angle="-0.12" style="left:8vw;top:8vh;transform:rotate(-0.12rad)"><span class="label-base">Araf</span></div>
+<div class="item word big" data-angle="0.1" style="left:32vw;top:14vh;transform:rotate(0.1rad)"><span class="label-base">Sasa</span></div>
 
-<div class="item word tiny" data-angle="0.08" style="left:20vw;top:12vh;transform:rotate(0.08rad)"><span class="label-base">happy birthday</span><span class="label-blend">happy birthday</span></div>
-<div class="item word tiny" data-angle="-0.05" style="left:90vw;top:10vh;transform:rotate(-0.05rad)"><span class="label-base">sende bir parçam var</span><span class="label-blend">sende bir parçam var</span></div>
-<div class="item word tiny soft" data-angle="0.03" style="left:42vw;top:18vh;transform:rotate(0.03rad)"><span class="label-base">smoking movie night</span><span class="label-blend">smoking movie night</span></div>
-<div class="item word tiny" data-angle="-0.09" style="left:12vw;top:40vh;transform:rotate(-0.09rad)"><span class="label-base">Marmaris</span><span class="label-blend">Marmaris</span></div>
-<div class="item word tiny" data-angle="0.06" style="left:68vw;top:36vh;transform:rotate(0.06rad)"><span class="label-base">late night muisc</span><span class="label-blend">late night muisc</span></div>
-<div class="item word tiny soft" data-angle="-0.04" style="left:28vw;top:60vh;transform:rotate(-0.04rad)"><span class="label-base">곰단짝</span><span class="label-blend">곰단짝</span></div>
-<div class="item word tiny" data-angle="0.11" style="left:52vw;top:55vh;transform:rotate(0.11rad)"><span class="label-base">whiskey from afar</span><span class="label-blend">whiskey from afar</span></div>
-<div class="item word tiny" data-angle="-0.07" style="left:76vw;top:70vh;transform:rotate(-0.07rad)"><span class="label-base">우리의 영화</span><span class="label-blend">우리의 영화</span></div>
-<div class="item word tiny soft" data-angle="0.05" style="left:35vw;top:28vh;transform:rotate(0.05rad)"><span class="label-base">우리가 좋아하는 사람들</span><span class="label-blend">우리가 좋아하는 사람들</span></div>
-<div class="item word tiny" data-angle="-0.03" style="left:58vw;top:75vh;transform:rotate(-0.03rad)"><span class="label-base">your günaydın</span><span class="label-blend">your günaydın</span></div>
-<div class="item word tiny" data-angle="0.09" style="left:10vw;top:75vh;transform:rotate(0.09rad)"><span class="label-base">good night kiss</span><span class="label-blend">good night kiss</span></div>
-<div class="item word tiny soft" data-angle="-0.06" style="left:80vw;top:22vh;transform:rotate(-0.06rad)"><span class="label-base">너의 행복을 바래</span><span class="label-blend">너의 행복을 바래</span></div>
-<div class="item word tiny" data-angle="0.04" style="left:80vw;top:40vh;transform:rotate(0.04rad)"><span class="label-base">my safe place</span><span class="label-blend">my safe place</span></div>
-<div class="item word tiny soft" data-angle="-0.08" style="left:72vw;top:55vh;transform:rotate(-0.08rad)"><span class="label-base">sunshine</span><span class="label-blend">sunshine</span></div>
-<div class="item word tiny" data-angle="0.02" style="left:48vw;top:82vh;transform:rotate(0.02rad)"><span class="label-base">dream car road trip</span><span class="label-blend">dream car road trip</span></div>
-
-
-
+<div class="item word tiny" data-angle="0.08" style="left:20vw;top:12vh;transform:rotate(0.08rad)"><span class="label-base">happy birthday</span></div>
+<div class="item word tiny" data-angle="-0.05" style="left:90vw;top:10vh;transform:rotate(-0.05rad)"><span class="label-base">sende bir parçam var</span></div>
+<div class="item word tiny soft" data-angle="0.03" style="left:42vw;top:18vh;transform:rotate(0.03rad)"><span class="label-base">smoking movie night</span></div>
+<div class="item word tiny" data-angle="-0.09" style="left:12vw;top:40vh;transform:rotate(-0.09rad)"><span class="label-base">Marmaris</span></div>
+<div class="item word tiny" data-angle="0.06" style="left:68vw;top:36vh;transform:rotate(0.06rad)"><span class="label-base">late night muisc</span></div>
+<div class="item word tiny soft" data-angle="-0.04" style="left:28vw;top:60vh;transform:rotate(-0.04rad)"><span class="label-base">곰단짝</span></div>
+<div class="item word tiny" data-angle="0.11" style="left:52vw;top:55vh;transform:rotate(0.11rad)"><span class="label-base">whiskey from afar</span></div>
+<div class="item word tiny" data-angle="-0.07" style="left:76vw;top:70vh;transform:rotate(-0.07rad)"><span class="label-base">우리의 영화</span></div>
+<div class="item word tiny soft" data-angle="0.05" style="left:35vw;top:28vh;transform:rotate(0.05rad)"><span class="label-base">우리가 좋아하는 사람들</span></div>
+<div class="item word tiny" data-angle="-0.03" style="left:58vw;top:75vh;transform:rotate(-0.03rad)"><span class="label-base">your günaydın</span></div>
+<div class="item word tiny" data-angle="0.09" style="left:10vw;top:75vh;transform:rotate(0.09rad)"><span class="label-base">good night kiss</span></div>
+<div class="item word tiny soft" data-angle="-0.06" style="left:80vw;top:22vh;transform:rotate(-0.06rad)"><span class="label-base">너의 행복을 바래</span></div>
+<div class="item word tiny" data-angle="0.04" style="left:80vw;top:40vh;transform:rotate(0.04rad)"><span class="label-base">my safe place</span></div>
+<div class="item word tiny soft" data-angle="-0.08" style="left:72vw;top:55vh;transform:rotate(-0.08rad)"><span class="label-base">sunshine</span></div>
+<div class="item word tiny" data-angle="0.02" style="left:48vw;top:82vh;transform:rotate(0.02rad)"><span class="label-base">dream car road trip</span></div>
 </div>
 
 <div class="tip side-label"><span>kelimeleri sürükle !</span></div>
@@ -405,8 +440,13 @@ world.gravity.y = 1;
 
 const items = document.querySelectorAll('.item');
 const centerTitleEl = document.getElementById('centerTitle');
+const centerSubEl = document.querySelector('.center-sub');
 const heartRunnerEl = document.getElementById('heartRunner');
+const svgMaskLayerEl = document.getElementById('svgMaskLayer');
+const svgMaskedTextsEl = document.getElementById('svgMaskedTexts');
+const circleClipShapeEl = document.getElementById('circleClipShape');
 const bodies = [];
+const staticSvgEntries = [];
 
 let floor = null;
 let leftWall = null;
@@ -456,8 +496,6 @@ function createBounds() {
     }
   );
 
-  // create physics bodies for cake tiers
-  const cakeEl = document.querySelector('.cake');
   const tier1 = document.querySelector('.tier-1').getBoundingClientRect();
   const tier2 = document.querySelector('.tier-2').getBoundingClientRect();
   const tier3 = document.querySelector('.tier-3').getBoundingClientRect();
@@ -489,7 +527,31 @@ function createBounds() {
   World.add(world, [floor, leftWall, rightWall, ceiling, centerBlock, cakeBlock1, cakeBlock2, cakeBlock3]);
 }
 
+function createSvgTextForElement(el) {
+  if (!svgMaskedTextsEl) return null;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const textEl = document.createElementNS(svgNS, 'text');
+  textEl.textContent = el.innerText.trim();
+  if (el.classList.contains('big')) textEl.setAttribute('class', 'svg-big');
+  else if (el.classList.contains('tiny')) textEl.setAttribute('class', 'svg-tiny');
+  else textEl.setAttribute('class', 'svg-word');
+  svgMaskedTextsEl.appendChild(textEl);
+  return textEl;
+}
+
+function createStaticSvgText(sourceEl, className) {
+  if (!svgMaskedTextsEl || !sourceEl) return;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const textEl = document.createElementNS(svgNS, 'text');
+  textEl.textContent = sourceEl.textContent.trim();
+  textEl.setAttribute('class', className);
+  svgMaskedTextsEl.appendChild(textEl);
+  staticSvgEntries.push({ source: sourceEl, textEl });
+}
+
 createBounds();
+createStaticSvgText(centerTitleEl, 'svg-center-title');
+createStaticSvgText(centerSubEl, 'svg-center-sub');
 
 items.forEach((el) => {
   const rect = el.getBoundingClientRect();
@@ -508,7 +570,8 @@ items.forEach((el) => {
     }
   );
 
-  bodies.push({ el, body, w: rect.width, h: rect.height, initialAngle });
+  const svgText = createSvgTextForElement(el);
+  bodies.push({ el, body, w: rect.width, h: rect.height, initialAngle, svgText });
   World.add(world, body);
 });
 
@@ -525,7 +588,6 @@ mouseConstraint = MouseConstraint.create(engine, {
 });
 World.add(world, mouseConstraint);
 
-// ALT key: enable text selection instead of dragging
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Alt') {
     document.body.classList.add('alt-select');
@@ -571,7 +633,6 @@ window.addEventListener('keydown', (e) => {
 let dragStart = null;
 let lastDragSample = null;
 let draggedBody = null;
-
 
 Matter.Events.on(mouseConstraint, 'startdrag', (event) => {
   draggedBody = event.body;
@@ -629,7 +690,17 @@ function render() {
   const circleEl = document.querySelector('.circle');
   const circleRect = circleEl ? circleEl.getBoundingClientRect() : null;
 
-  bodies.forEach(({ el, body, w, h, initialAngle }) => {
+  if (svgMaskLayerEl) {
+    svgMaskLayerEl.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+  }
+
+  if (circleRect && circleClipShapeEl) {
+    circleClipShapeEl.setAttribute('cx', circleRect.left + circleRect.width / 2);
+    circleClipShapeEl.setAttribute('cy', circleRect.top + circleRect.height / 2);
+    circleClipShapeEl.setAttribute('r', circleRect.width / 2);
+  }
+
+  bodies.forEach(({ el, body, w, h, initialAngle, svgText }) => {
     if (started) {
       el.style.left = (body.position.x - w / 2) + 'px';
       el.style.top = (body.position.y - h / 2) + 'px';
@@ -638,13 +709,21 @@ function render() {
       el.style.transform = `rotate(${initialAngle}rad)`;
     }
 
-    const blend = el.querySelector('.label-blend');
-    if (blend && circleRect) {
+    if (svgText) {
       const rect = el.getBoundingClientRect();
-      const overlapX = Math.max(0, Math.min(rect.right, circleRect.right) - Math.max(rect.left, circleRect.left));
-      const overlapY = Math.max(0, Math.min(rect.bottom, circleRect.bottom) - Math.max(rect.top, circleRect.top));
-      blend.style.opacity = overlapX > 0 && overlapY > 0 ? '1' : '0';
+      const angleDeg = ((started ? body.angle : initialAngle) * 180) / Math.PI;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      svgText.setAttribute('x', cx);
+      svgText.setAttribute('y', cy);
+      svgText.setAttribute('transform', `rotate(${angleDeg} ${cx} ${cy})`);
     }
+  });
+
+  staticSvgEntries.forEach(({ source, textEl }) => {
+    const rect = source.getBoundingClientRect();
+    textEl.setAttribute('x', rect.left + rect.width / 2);
+    textEl.setAttribute('y', rect.top + rect.height / 2);
   });
 
   const maxX = window.innerWidth - heartRunner.size;
@@ -708,7 +787,6 @@ window.addEventListener('resize', () => {
 });
 
 render();
-
 </script>
 
 <audio id="bgMusic" src="music.mp3" loop preload="auto" playsinline></audio>
